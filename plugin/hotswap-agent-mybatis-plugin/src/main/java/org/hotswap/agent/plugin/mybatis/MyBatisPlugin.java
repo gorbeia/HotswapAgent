@@ -20,7 +20,9 @@ package org.hotswap.agent.plugin.mybatis;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.hotswap.agent.annotation.FileEvent;
 import org.hotswap.agent.annotation.Init;
@@ -52,7 +54,7 @@ public class MyBatisPlugin {
     @Init
     ClassLoader appClassLoader;
 
-    Map<String, Object> configurationMap = new HashMap<>();
+    Set<String> configurationSet = new HashSet<>();
 
     Command reloadConfigurationCommand =
             new ReflectionCommand(this, MyBatisRefreshCommands.class.getName(), "reloadConfiguration");
@@ -63,15 +65,15 @@ public class MyBatisPlugin {
     }
 
     public void registerConfigurationFile(String configFile, Object configObject) {
-        if (configFile != null && !configurationMap.containsKey(configFile)) {
+        if (configFile != null && !configurationSet.contains(configFile)) {
             LOGGER.debug("MyBatisPlugin - configuration file registered : {}", configFile);
-            configurationMap.put(configFile, configObject);
+            configurationSet.add(configFile);
         }
     }
 
     @OnResourceFileEvent(path="/", filter = ".*.xml", events = {FileEvent.MODIFY})
     public void registerResourceListeners(URL url) {
-        if (configurationMap.containsKey(url.getPath())) {
+        if (configurationSet.stream().anyMatch((k) -> url.toString().endsWith(k))) {
             refresh(500);
         }
     }
