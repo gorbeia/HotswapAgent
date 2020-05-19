@@ -109,7 +109,7 @@ public class MyBatisTransformers {
         StringBuilder src = new StringBuilder("{");
         src.append(PluginManagerInvoker.buildInitializePlugin(MyBatisPlugin.class));
         src.append(PluginManagerInvoker.buildCallPluginMethod(MyBatisPlugin.class, "registerConfigurationFile",
-                XPathParserCaller.class.getName() + ".getSrcFileName(this.parser)", "java.lang.String", "this", "java.lang.Object"));
+                "this.resource", "java.lang.String", "this", "java.lang.Object"));
         src.append("}");
 
         CtClass[] constructorParams = new CtClass[] {
